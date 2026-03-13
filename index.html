@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEL ORDER AUMENTADA — Escala a Europa sin triplicar equipo | SAINI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --orange: #FF6600;
+    --dark: #1A1A1A;
+    --white: #FFFFFF;
+    --bg-light: #FAFAFA;
+    --bg-warm: #FFF5EE;
+    --bg-warm2: #FFF8F3;
+    --text-main: #333333;
+    --text-body: #555555;
+    --text-muted: #888888;
+    --text-label: #666666;
+    --text-light: #999999;
+    --divider: #E5E5E5;
+    --red: #FF4444;
+    --green: #22C55E;
+    --bar-h: 6px;
+    --slide-pad-y: 60px;
+    --slide-pad-x: 100px;
+  }
+
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* ── Slide Container ── */
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .45s ease, visibility .45s ease;
+    overflow: hidden;
+  }
+
+  .slide.active { opacity: 1; visibility: visible; }
+
+  /* ── Top bar ── */
+  .top-bar { width: 100%; height: var(--bar-h); background: var(--orange); flex-shrink: 0; }
+
+  /* ── Slide body ── */
+  .slide-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--slide-pad-y) var(--slide-pad-x);
+    gap: 32px;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .slide-header { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+  .slide-title { font-size: 40px; font-weight: 700; color: var(--dark); line-height: 1.15; }
+  .slide-subtitle { font-size: 22px; color: var(--text-body); line-height: 1.5; }
+  .badge { display: inline-flex; padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; flex-shrink: 0; }
+  .badge-orange { background: var(--orange); color: var(--white); }
+  .badge-warm { background: var(--bg-warm); color: var(--orange); }
+  .badge-red { background: #FFF0F0; color: var(--red); }
+  .badge-green { background: #F0FFF4; color: var(--green); }
+
+  .divider { width: 100%; height: 1px; background: var(--divider); flex-shrink: 0; }
+
+  /* ── Grid helpers ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 16px; }
+  .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 16px; }
+
+  .content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    min-height: 0;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-light);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-sm {
+    background: var(--bg-light);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-warm { background: var(--bg-warm); }
+  .card-warm2 { background: var(--bg-warm2); }
+  .card-dark { background: var(--dark); color: var(--white); }
+
+  .stat-card {
+    background: var(--bg-warm);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .stat-number { font-size: 48px; font-weight: 700; color: var(--orange); line-height: 1; }
+  .stat-label { font-size: 18px; color: var(--text-label); }
+
+  .data-card {
+    background: var(--bg-warm);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .data-number { font-size: 36px; font-weight: 700; color: var(--orange); line-height: 1; }
+  .data-label { font-size: 15px; color: var(--text-label); }
+
+  .card-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 2px; text-transform: uppercase; }
+  .card-text { font-size: 20px; color: var(--text-main); line-height: 1.4; }
+  .card-title { font-size: 20px; font-weight: 700; color: var(--orange); }
+  .card-title-sm { font-size: 18px; font-weight: 700; color: var(--orange); }
+  .card-desc { font-size: 16px; color: var(--text-body); line-height: 1.5; }
+  .card-desc-sm { font-size: 15px; color: var(--text-body); line-height: 1.5; }
+
+  /* ── Comparison cards ── */
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+
+  .compare-card {
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .compare-card.grey { background: #F5F5F5; }
+  .compare-card.orange { background: var(--orange); color: var(--white); }
+  .compare-card h3 { font-size: 28px; font-weight: 700; }
+  .compare-card .list { font-size: 19px; line-height: 1.8; }
+  .compare-card .tagline { font-size: 22px; font-weight: 700; }
+  .compare-card.grey h3 { color: var(--text-light); }
+  .compare-card.grey .list { color: var(--text-muted); }
+  .compare-card.grey .tagline { color: var(--text-muted); }
+  .compare-card.orange h3, .compare-card.orange .tagline { color: var(--white); }
+  .compare-card.orange .list { color: rgba(255,255,255,0.9); }
+
+  /* ── Pain point cards ── */
+  .pain-card {
+    background: #FFF0F0;
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 4px solid var(--red);
+  }
+
+  .pain-card.yellow {
+    background: #FFFBEB;
+    border-left-color: #F59E0B;
+  }
+
+  .pain-title { font-size: 18px; font-weight: 700; color: var(--dark); }
+  .pain-desc { font-size: 15px; color: var(--text-body); line-height: 1.5; }
+  .pain-impact { font-size: 14px; font-weight: 600; color: var(--red); }
+  .pain-card.yellow .pain-impact { color: #D97706; }
+
+  /* ── Agent cards ── */
+  .agent-card {
+    background: var(--bg-warm);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .agent-icon { font-size: 32px; }
+  .agent-name { font-size: 16px; font-weight: 700; color: var(--orange); }
+  .agent-desc { font-size: 13px; color: var(--text-body); line-height: 1.4; }
+
+  /* ── Timeline ── */
+  .timeline-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .timeline-phase {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px;
+    border-radius: 16px;
+    position: relative;
+  }
+
+  .timeline-phase:first-child { background: var(--bg-warm); margin-right: 8px; }
+  .timeline-phase:last-child { background: var(--bg-light); margin-left: 8px; }
+
+  .phase-label { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 2px; text-transform: uppercase; }
+  .phase-title { font-size: 24px; font-weight: 700; color: var(--dark); }
+  .phase-time { font-size: 16px; color: var(--text-muted); }
+  .phase-items { font-size: 15px; color: var(--text-body); line-height: 1.8; }
+
+  /* ── Pricing table ── */
+  .price-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    font-size: 18px;
+  }
+
+  .price-table th {
+    background: var(--dark);
+    color: var(--white);
+    padding: 20px 28px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .price-table th:last-child { text-align: right; }
+
+  .price-table td {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--divider);
+  }
+
+  .price-table td:last-child { text-align: right; font-weight: 700; color: var(--orange); }
+
+  .price-table tr:nth-child(even) td { background: var(--bg-light); }
+  .price-table tr:last-child td { border-bottom: none; }
+  .price-table tr.total td { background: var(--bg-warm); font-weight: 700; font-size: 20px; }
+  .price-table tr.total td:last-child { font-size: 22px; }
+
+  /* ── Case study ── */
+  .case-card {
+    background: var(--bg-warm);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .case-name { font-size: 22px; font-weight: 700; color: var(--orange); }
+  .case-desc { font-size: 15px; color: var(--text-body); line-height: 1.5; }
+  .case-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+  .case-stat { display: flex; flex-direction: column; gap: 2px; }
+  .case-stat-num { font-size: 24px; font-weight: 700; color: var(--dark); }
+  .case-stat-label { font-size: 13px; color: var(--text-muted); }
+
+  /* ── Footer ── */
+  .slide-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    text-align: center;
+    padding-bottom: 8px;
+  }
+
+  .footer-big { font-size: 28px; font-weight: 700; color: var(--orange); }
+  .footer-sub { font-size: 18px; color: var(--text-muted); }
+  .footer-small { font-size: 14px; color: var(--text-light); }
+
+  /* ── Cover slide ── */
+  .cover-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 80px;
+    text-align: center;
+  }
+
+  .cover-badge {
+    display: inline-flex;
+    padding: 12px 24px;
+    border-radius: 100px;
+    background: var(--bg-warm);
+    color: var(--orange);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .cover-title {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.1;
+  }
+
+  .cover-title span { color: var(--orange); }
+
+  .cover-subtitle {
+    font-size: 24px;
+    color: var(--text-body);
+    max-width: 700px;
+    line-height: 1.5;
+  }
+
+  .cover-meta {
+    font-size: 16px;
+    color: var(--text-light);
+    display: flex;
+    gap: 32px;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav button {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: var(--dark);
+    color: var(--white);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+
+  .nav button:hover { background: var(--orange); }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 32px;
+    left: 32px;
+    font-size: 14px;
+    color: var(--text-light);
+    z-index: 100;
+    background: rgba(255,255,255,0.9);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* ── Progress bar ── */
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--orange);
+    z-index: 200;
+    transition: width .3s ease;
+  }
+
+  /* ── Quote ── */
+  .quote-block {
+    background: var(--dark);
+    border-radius: 20px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .quote-text {
+    font-size: 22px;
+    color: var(--white);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .quote-text span { color: var(--orange); font-weight: 700; }
+
+  /* ── Objection cards ── */
+  .objection-card {
+    background: var(--bg-light);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .objection-q { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .objection-a { font-size: 15px; color: var(--text-body); line-height: 1.5; }
+
+  /* ── CTA slide ── */
+  .cta-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 80px;
+    text-align: center;
+    background: var(--dark);
+  }
+
+  .cta-title { font-size: 48px; font-weight: 800; color: var(--white); line-height: 1.15; }
+  .cta-title span { color: var(--orange); }
+  .cta-sub { font-size: 22px; color: var(--text-light); max-width: 600px; line-height: 1.5; }
+  .cta-contact { font-size: 20px; color: var(--orange); font-weight: 600; }
+  .cta-small { font-size: 16px; color: var(--text-muted); }
+
+  /* ── Misc ── */
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-orange { color: var(--orange); }
+  .fw-700 { font-weight: 700; }
+  .gap-24 { gap: 24px; }
+  .gap-32 { gap: 32px; }
+  .mt-auto { margin-top: auto; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+<!-- ════════════════════ SLIDE 01 — COVER ════════════════════ -->
+<div class="slide active" data-slide="1">
+  <div class="top-bar"></div>
+  <div class="cover-body">
+    <div class="cover-badge">PROPUESTA ESTRATEGICA</div>
+    <div class="cover-title">STEL Order<br><span>Aumentada</span></div>
+    <div class="cover-subtitle">Escala a Europa sin triplicar equipo. Un sistema de IA que multiplica a los 30 que ya tenéis.</div>
+    <div class="cover-meta">
+      <span>SAINI — Sistemas Operativos Agénticos</span>
+      <span>Marzo 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 02 — RADIOGRAFIA ════════════════════ -->
+<div class="slide" data-slide="2">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Radiografía STEL Order</div>
+      <div class="badge badge-warm">13 AÑOS EN EL MERCADO</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-number">100K</div>
+          <div class="stat-label">Usuarios en<br>100+ países</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Satisfacción<br>de clientes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">+46%</div>
+          <div class="stat-label">Crecimiento<br>facturación</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">30-50</div>
+          <div class="stat-label">Empleados<br>bootstrapped</div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top: 8px;">
+        <div class="card">
+          <div class="card-tag">PRODUCTO</div>
+          <div class="card-desc">ERP cloud + CRM + Field Service Management. Mobile-first con apps nativas iOS/Android que funcionan offline.</div>
+        </div>
+        <div class="card">
+          <div class="card-tag">VENTAJA COMPETITIVA</div>
+          <div class="card-desc">Único ERP español mid-market que combina facturación + CRM + FSM completo a precios accesibles (18-60€/mes).</div>
+        </div>
+        <div class="card">
+          <div class="card-tag">MERCADO</div>
+          <div class="card-desc">Pymes de servicios en campo: HVAC, electricistas, fontaneros, mantenimiento industrial, instaladores técnicos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-small">Fuente: stelorder.com, Capterra, LinkedIn, Iberinform</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 03 — EL RETO ════════════════════ -->
+<div class="slide" data-slide="3">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">El reto: Europa</div>
+      <div class="badge badge-red">URGENTE</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="slide-subtitle">Tenéis el producto. Os falta el músculo para llegar.</div>
+      <div class="grid-2" style="flex: 1; min-height: 0;">
+        <div class="quote-block">
+          <div class="quote-text">"Holded fue comprada por Visma por <span>120M€</span>. Odoo levantó <span>215M€</span>. Vosotros competís con <span>30 personas desde Murcia</span>."</div>
+          <div style="width: 60px; height: 3px; background: var(--orange);"></div>
+          <div class="quote-text" style="font-size: 18px; font-style: normal;">La pregunta no es si vuestro producto es bueno. Es si podéis escalarlo antes de que os coman el mercado.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="data-card" style="flex: 1;">
+            <div class="data-number">0</div>
+            <div class="data-label">Oficinas fuera de España</div>
+          </div>
+          <div class="data-card" style="flex: 1;">
+            <div class="data-number">654</div>
+            <div class="data-label">Followers en LinkedIn<br>(vs. 50+ empleados y 100K usuarios)</div>
+          </div>
+          <div class="data-card" style="flex: 1;">
+            <div class="data-number">0</div>
+            <div class="data-label">Menciones de IA en<br>producto o marketing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 04 — DOLORES ════════════════════ -->
+<div class="slide" data-slide="4">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Detección de dolores</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="grid-2" style="flex: 1; min-height: 0;">
+        <div class="pain-card" style="flex: 1;">
+          <div class="pain-title">1. Escalar sin equipo local</div>
+          <div class="pain-desc">No tenéis comerciales ni soporte multilingüe para Europa. Cada usuario que no recibe soporte rápido en su idioma = churn.</div>
+          <div class="pain-impact">Impacto: Pérdida de mercado europeo frente a competidores locales</div>
+        </div>
+        <div class="pain-card" style="flex: 1;">
+          <div class="pain-title">2. Cero IA en 2026</div>
+          <div class="pain-desc">Odoo ya integra IA, SAP tiene Joule, Salesforce Einstein. STEL Order no tiene ninguna mención de IA en web ni producto.</div>
+          <div class="pain-impact">Impacto: Percepción de "software del pasado" vs. nueva generación</div>
+        </div>
+        <div class="pain-card yellow" style="flex: 1;">
+          <div class="pain-title">3. VeriFactu = pico de demanda</div>
+          <div class="pain-desc">Facturación electrónica obligatoria genera oleada de consultas de soporte. 100K usuarios con equipo de 30-50 personas.</div>
+          <div class="pain-impact">Impacto: Soporte desbordado, tiempos de respuesta disparados</div>
+        </div>
+        <div class="pain-card yellow" style="flex: 1;">
+          <div class="pain-title">4. Venden features, no resultados</div>
+          <div class="pain-desc">Sin case studies con métricas, sin ROI calculators, sin storytelling de transformación. Posicionamiento diluido intentando abarcar todos los segmentos.</div>
+          <div class="pain-impact">Impacto: Comparables por precio en vez de por valor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 05 — LA PROPUESTA ════════════════════ -->
+<div class="slide" data-slide="5">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">La propuesta</div>
+      <div class="badge badge-orange">HUMANO AUMENTADO</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="quote-block" style="flex: 0;">
+        <div class="quote-text" style="font-size: 26px;">
+          "Un equipo de <span>30 personas</span> con un SOA rinde como uno de <span>100</span>. No es un chatbot. Son <span>5 agentes coordinados</span> que operan departamentos enteros."
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top: 8px;">
+        <div class="card card-warm">
+          <div class="card-tag">REALIDAD STELORDER</div>
+          <div class="card-text">30-50 empleados bootstrapped</div>
+          <div class="card-text">Expansión europea sin equipo local</div>
+          <div class="card-text">100K usuarios con soporte limitado</div>
+          <div class="card-text">VeriFactu genera pico de soporte</div>
+        </div>
+        <div class="card" style="background: var(--orange); color: white;">
+          <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px;">PROPUESTA SAINI</div>
+          <div style="font-size: 20px; line-height: 1.4;">Sistema que rinda como 20 personas</div>
+          <div style="font-size: 20px; line-height: 1.4;">Agentes IA multilingües 24/7</div>
+          <div style="font-size: 20px; line-height: 1.4;">60-80% consultas resueltas auto</div>
+          <div style="font-size: 20px; line-height: 1.4;">Absorber picos sin contratar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 06 — FASE 1: ATIENDE ════════════════════ -->
+<div class="slide" data-slide="6">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Fase 1: ATIENDE</div>
+      <div class="badge badge-orange">SOPORTE 24/7 MULTILINGÜE</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="slide-subtitle">5 agentes especializados que operan el departamento de soporte completo</div>
+      <div class="grid-5">
+        <div class="agent-card">
+          <div class="agent-icon">⚡</div>
+          <div class="agent-name">Resolutor</div>
+          <div class="agent-desc">Resuelve consultas frecuentes: facturación, VeriFactu, configuración. En cualquier idioma.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">📡</div>
+          <div class="agent-name">Capturador</div>
+          <div class="agent-desc">Recoge feedback de usuarios y detecta patrones de soporte recurrentes.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">🎯</div>
+          <div class="agent-name">Escalador</div>
+          <div class="agent-desc">Deriva a humano cuando es necesario, con contexto completo del caso.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">🛡️</div>
+          <div class="agent-name">Centinela</div>
+          <div class="agent-desc">Monitoriza satisfacción y detecta riesgo de churn antes de que ocurra.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">📊</div>
+          <div class="agent-name">Mejorador</div>
+          <div class="agent-desc">Genera informes semanales de tendencias y sugiere mejoras al producto.</div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top: 8px;">
+        <div class="data-card">
+          <div class="data-number">60-80%</div>
+          <div class="data-label">Consultas resueltas<br>sin intervención humana</div>
+        </div>
+        <div class="data-card">
+          <div class="data-number">&lt;30s</div>
+          <div class="data-label">Tiempo de primera<br>respuesta</div>
+        </div>
+        <div class="data-card">
+          <div class="data-number">24/7</div>
+          <div class="data-label">Soporte multilingüe<br>ES · EN · FR · DE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 07 — FASE 2: VENDE ════════════════════ -->
+<div class="slide" data-slide="7">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Fase 2: VENDE</div>
+      <div class="badge badge-orange">VENTAS EUROPEAS SIN COMERCIALES</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="slide-subtitle">5 agentes que gestionan el pipeline europeo completo</div>
+      <div class="grid-5">
+        <div class="agent-card">
+          <div class="agent-icon">🔍</div>
+          <div class="agent-name">Cualificador</div>
+          <div class="agent-desc">Evalúa leads entrantes y asigna score automático según perfil ideal.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">💬</div>
+          <div class="agent-name">Respondedor</div>
+          <div class="agent-desc">Primera respuesta en &lt;5min, en el idioma del lead. Personalizada.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">🔄</div>
+          <div class="agent-name">Seguidor</div>
+          <div class="agent-desc">Follow-up automatizado: día 3, 7, 14 y 30. Sin que se escape ningún lead.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">🤝</div>
+          <div class="agent-name">Asistente</div>
+          <div class="agent-desc">Ayuda al equipo comercial con datos, contexto e histórico de cada lead.</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon">📈</div>
+          <div class="agent-name">Analista</div>
+          <div class="agent-desc">Pipeline, forecast y métricas de conversión por país y canal.</div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top: 8px;">
+        <div class="data-card">
+          <div class="data-number">&lt;5min</div>
+          <div class="data-label">Tiempo de respuesta<br>a leads (9x más conversión)</div>
+        </div>
+        <div class="data-card">
+          <div class="data-number">85%+</div>
+          <div class="data-label">Precisión en<br>forecast de ventas</div>
+        </div>
+        <div class="data-card">
+          <div class="data-number">0</div>
+          <div class="data-label">Comerciales nuevos<br>necesarios para Europa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 08 — ANTES vs DESPUÉS ════════════════════ -->
+<div class="slide" data-slide="8">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Antes vs. Después</div>
+    </div>
+    <div class="divider"></div>
+    <div class="compare-row">
+      <div class="compare-card grey">
+        <h3>Sin SOA</h3>
+        <div class="list">
+          ✗ Soporte solo en español, horario laboral<br>
+          ✗ Leads europeos sin respuesta en &lt;24h<br>
+          ✗ Picos de VeriFactu desbordan al equipo<br>
+          ✗ Contratar 1 persona por país = inviable<br>
+          ✗ Sin IA = percepción de "software antiguo"<br>
+          ✗ Churn en mercados nuevos por falta de soporte
+        </div>
+        <div class="tagline">Crecer = contratar más gente</div>
+      </div>
+      <div class="compare-card orange">
+        <h3>Con SOA SAINI</h3>
+        <div class="list">
+          ✓ Soporte 24/7 en ES, EN, FR, DE<br>
+          ✓ Leads respondidos en &lt;5 minutos<br>
+          ✓ Agentes absorben picos sin contratar<br>
+          ✓ 1 sistema = todos los mercados europeos<br>
+          ✓ IA integrada = narrativa de innovación<br>
+          ✓ Centinela detecta churn antes de que pase
+        </div>
+        <div class="tagline">Crecer = amplificar a los que ya tenéis</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 09 — CASOS DE EXITO ════════════════════ -->
+<div class="slide" data-slide="9">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Casos en producción</div>
+      <div class="badge badge-warm">RESULTADOS REALES</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="grid-3" style="flex: 1; min-height: 0;">
+        <div class="case-card" style="flex: 1;">
+          <div class="case-name">IANOS</div>
+          <div class="case-desc">Plataforma con 22.000+ usuarios. SOA de atención al ciudadano operando 24/7.</div>
+          <div class="case-stats">
+            <div class="case-stat">
+              <div class="case-stat-num">22,000+</div>
+              <div class="case-stat-label">Usuarios</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">90,000+</div>
+              <div class="case-stat-label">Conversaciones</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">&lt;3s</div>
+              <div class="case-stat-label">Respuesta</div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: var(--orange); font-weight: 600; margin-top: auto;">Para demostrar ESCALA</div>
+        </div>
+        <div class="case-card" style="flex: 1;">
+          <div class="case-name">KEYTER</div>
+          <div class="case-desc">Empresa industrial. Automatización de procesos operativos y gestión de conocimiento.</div>
+          <div class="case-stats">
+            <div class="case-stat">
+              <div class="case-stat-num">676h/año</div>
+              <div class="case-stat-label">Automatizables</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">97%</div>
+              <div class="case-stat-label">Reducción</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">4h→30s</div>
+              <div class="case-stat-label">Búsqueda info</div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: var(--orange); font-weight: 600; margin-top: auto;">Para demostrar ROI</div>
+        </div>
+        <div class="case-card" style="flex: 1;">
+          <div class="case-name">BLINKER</div>
+          <div class="case-desc">E-commerce B2B con integración ERP. 15 comerciales usando el sistema a diario.</div>
+          <div class="case-stats">
+            <div class="case-stat">
+              <div class="case-stat-num">40,000</div>
+              <div class="case-stat-label">Productos</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">15</div>
+              <div class="case-stat-label">Comerciales</div>
+            </div>
+            <div class="case-stat">
+              <div class="case-stat-num">60%</div>
+              <div class="case-stat-label">-Tiempo búsqueda</div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: var(--orange); font-weight: 600; margin-top: auto;">Caso más comparable a STEL Order</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 10 — TIMELINE ════════════════════ -->
+<div class="slide" data-slide="10">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Timeline</div>
+      <div class="badge badge-warm">2,5 — 3 MESES</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="timeline-row">
+        <div class="timeline-phase">
+          <div class="phase-label">FASE 1</div>
+          <div class="phase-title">ATIENDE Enterprise</div>
+          <div class="phase-time">Semanas 1-6</div>
+          <div style="width: 100%; height: 1px; background: var(--divider);"></div>
+          <div class="phase-items">
+            ▸ Semana 1-2: Discovery + integración API<br>
+            ▸ Semana 3-4: Configuración de agentes y flujos<br>
+            ▸ Semana 5: Testing y ajustes con equipo real<br>
+            ▸ Semana 6: Go-live progresivo + formación
+          </div>
+          <div style="margin-top: auto;">
+            <div class="data-card" style="background: white;">
+              <div class="data-number" style="font-size: 28px;">12.000€</div>
+              <div class="data-label">Quick win — resultados inmediatos</div>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-phase">
+          <div class="phase-label">FASE 2</div>
+          <div class="phase-title">VENDE Enterprise</div>
+          <div class="phase-time">Semanas 7-11</div>
+          <div style="width: 100%; height: 1px; background: var(--divider);"></div>
+          <div class="phase-items">
+            ▸ Semana 7-8: Mapeo pipeline + cualificación<br>
+            ▸ Semana 9: Configuración agentes de ventas<br>
+            ▸ Semana 10: Integración CRM + follow-ups<br>
+            ▸ Semana 11: Go-live + optimización continua
+          </div>
+          <div style="margin-top: auto;">
+            <div class="data-card" style="background: white;">
+              <div class="data-number" style="font-size: 28px;">18.000€</div>
+              <div class="data-label">Escalar ventas europeas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 11 — INVERSION ════════════════════ -->
+<div class="slide" data-slide="11">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Inversión</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area" style="justify-content: flex-start; gap: 24px;">
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Inversión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fase 1: ATIENDE Enterprise — Soporte 24/7 multilingüe</td>
+            <td>12.000€</td>
+          </tr>
+          <tr>
+            <td>Fase 2: VENDE Enterprise — Pipeline europeo automatizado</td>
+            <td>18.000€</td>
+          </tr>
+          <tr>
+            <td>Multi-idioma (ES + EN + FR + DE)</td>
+            <td>+750€</td>
+          </tr>
+          <tr>
+            <td>Integración API STEL Order</td>
+            <td>+1.500€</td>
+          </tr>
+          <tr class="total">
+            <td>TOTAL PAQUETE COMPLETO</td>
+            <td>32.250€</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="grid-3">
+        <div class="card card-warm" style="text-align: center;">
+          <div class="card-tag">FORMA DE PAGO</div>
+          <div class="card-desc" style="font-size: 18px;">40% al confirmar<br>30% al completar Fase 1<br>30% al completar Fase 2</div>
+        </div>
+        <div class="card card-warm" style="text-align: center;">
+          <div class="card-tag">MANTENIMIENTO</div>
+          <div style="font-size: 32px; font-weight: 700; color: var(--orange);">549-699€</div>
+          <div class="card-desc">/mes · soporte + mejora continua</div>
+        </div>
+        <div class="card card-warm" style="text-align: center;">
+          <div class="card-tag">COMPARATIVA</div>
+          <div class="card-desc" style="font-size: 18px;">1 empleado para Europa:<br><strong style="font-size: 24px; color: var(--red);">40-50K€/año</strong><br>SOA completo: <strong style="font-size: 24px; color: var(--green);">32K€ una vez</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 12 — DIFERENCIADORES ════════════════════ -->
+<div class="slide" data-slide="12">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Por qué SAINI</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="grid-2" style="flex: 1; min-height: 0;">
+        <div class="compare-card grey" style="gap: 16px;">
+          <h3 style="font-size: 22px;">Lo que vende la competencia</h3>
+          <div class="list" style="font-size: 17px; line-height: 2;">
+            ✗ Un chatbot genérico<br>
+            ✗ Reactivo (solo responde)<br>
+            ✗ 1 agente para todo<br>
+            ✗ Sin memoria entre conversaciones<br>
+            ✗ ROI intangible, "confía en nosotros"<br>
+            ✗ Demo bonita, 0 usuarios reales
+          </div>
+        </div>
+        <div class="compare-card orange" style="gap: 16px;">
+          <h3 style="font-size: 22px;">Lo que entregamos nosotros</h3>
+          <div class="list" style="font-size: 17px; line-height: 2;">
+            ✓ Sistema operativo completo (SOA)<br>
+            ✓ Proactivo (informes, alertas, sugerencias)<br>
+            ✓ 5+ agentes especializados y coordinados<br>
+            ✓ Memoria acumulativa que mejora<br>
+            ✓ ROI medible cada mes con métricas<br>
+            ✓ 22,000+ usuarios reales en producción
+          </div>
+        </div>
+      </div>
+      <div class="card" style="background: var(--dark); text-align: center; padding: 24px;">
+        <div style="font-size: 20px; color: var(--white);">
+          "Trabajo con un sistema de IA propio que me permite <span style="color: var(--orange); font-weight: 700;">entregar a nivel de equipo siendo una sola persona</span>. Es exactamente lo que os voy a construir a vosotros."
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 13 — EJEMPLO CONCRETO ════════════════════ -->
+<div class="slide" data-slide="13">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Ejemplo real</div>
+      <div class="badge badge-warm">ESCENARIO STELORDER</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="slide-subtitle" style="font-size: 20px;">Un instalador francés no sabe configurar VeriFactu en su cuenta STEL Order</div>
+      <div class="grid-3" style="flex: 1; min-height: 0;">
+        <div class="card" style="background: #FFF0F0; flex: 1;">
+          <div style="font-size: 14px; font-weight: 700; color: var(--red); letter-spacing: 2px;">HOY</div>
+          <div style="font-size: 48px; text-align: center; margin: 8px 0;">😤</div>
+          <div class="card-desc" style="font-size: 17px;">
+            El usuario crea un ticket en inglés. Nadie lo atiende hasta el día siguiente. Se frustra. Prueba un competidor francés. Churn.
+          </div>
+          <div style="margin-top: auto; text-align: center;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--red);">24-48h</div>
+            <div style="font-size: 14px; color: var(--text-muted);">tiempo de respuesta</div>
+          </div>
+        </div>
+        <div class="card card-warm" style="flex: 1;">
+          <div style="font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 2px;">CON RESOLUTOR</div>
+          <div style="font-size: 48px; text-align: center; margin: 8px 0;">⚡</div>
+          <div class="card-desc" style="font-size: 17px;">
+            El agente Resolutor le responde en francés en 30 segundos con los pasos exactos de configuración. Caso resuelto.
+          </div>
+          <div style="margin-top: auto; text-align: center;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--orange);">&lt;30s</div>
+            <div style="font-size: 14px; color: var(--text-muted);">respuesta en francés</div>
+          </div>
+        </div>
+        <div class="card" style="background: #F0FFF4; flex: 1;">
+          <div style="font-size: 14px; font-weight: 700; color: var(--green); letter-spacing: 2px;">CON CENTINELA</div>
+          <div style="font-size: 48px; text-align: center; margin: 8px 0;">🛡️</div>
+          <div class="card-desc" style="font-size: 17px;">
+            Detecta que 50 usuarios franceses tienen la misma duda. Alerta: "Necesitáis una guía VeriFactu en francés". Proactivo.
+          </div>
+          <div style="margin-top: auto; text-align: center;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--green);">Proactivo</div>
+            <div style="font-size: 14px; color: var(--text-muted);">detecta patrones antes del problema</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 14 — OBJECIONES ════════════════════ -->
+<div class="slide" data-slide="14">
+  <div class="top-bar"></div>
+  <div class="slide-body">
+    <div class="slide-header">
+      <div class="slide-title">Preguntas frecuentes</div>
+    </div>
+    <div class="divider"></div>
+    <div class="content-area">
+      <div class="grid-2" style="flex: 1; min-height: 0;">
+        <div class="objection-card" style="flex: 1;">
+          <div class="objection-q">"Ya tenemos equipo técnico interno"</div>
+          <div class="objection-a">Tu equipo tiene que estar 100% en mejorar STEL Order, no en construir chatbots. En 6 semanas tenéis en producción lo que internamente llevaría 6+ meses.</div>
+        </div>
+        <div class="objection-card" style="flex: 1;">
+          <div class="objection-q">"Es caro para nuestro tamaño"</div>
+          <div class="objection-a">32K€ es menos que contratar UNA persona para Europa (40-50K€/año en salario + cargas). El sistema opera 24/7 en 4 idiomas sin vacaciones.</div>
+        </div>
+        <div class="objection-card" style="flex: 1;">
+          <div class="objection-q">"¿Se integra con nuestro sistema?"</div>
+          <div class="objection-a">Tenéis API REST en el plan Pro — es todo lo que necesitamos. Dame acceso a vuestra documentación y en 48h confirmo qué flujos podemos automatizar.</div>
+        </div>
+        <div class="objection-card" style="flex: 1;">
+          <div class="objection-q">"¿Y la privacidad de datos?"</div>
+          <div class="objection-a">GDPR compliant, datos en Europa, sin entrenamiento con vuestros datos. NDA y DPA firmados antes de empezar. Vosotros decidís qué información comparten los agentes.</div>
+        </div>
+      </div>
+      <div class="card" style="background: var(--bg-warm); text-align: center; padding: 20px;">
+        <div style="font-size: 18px; color: var(--text-body);">
+          <strong style="color: var(--orange);">Propuesta sin riesgo:</strong> Empezad solo con ATIENDE (12K€). 6 semanas, resultados medibles. Si funciona, escalamos a VENDE.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SLIDE 15 — CTA / CIERRE ════════════════════ -->
+<div class="slide" data-slide="15">
+  <div class="top-bar"></div>
+  <div class="cta-body">
+    <div class="cta-title">Escala a Europa<br>sin triplicar <span>equipo</span></div>
+    <div class="cta-sub">Un sistema que multiplica a los 30 que ya tenéis. De 0 a producción en 2,5 meses.</div>
+    <div style="width: 80px; height: 3px; background: var(--orange);"></div>
+    <div class="cta-contact">Fran Milla — SAINI</div>
+    <div class="cta-small">fran@saini.es · saini.es</div>
+    <div style="display: flex; gap: 32px; margin-top: 16px;">
+      <div class="data-card" style="background: rgba(255,255,255,0.08); min-width: 160px;">
+        <div class="data-number" style="font-size: 28px; color: var(--orange);">3 años</div>
+        <div class="data-label" style="color: var(--text-light);">en producción</div>
+      </div>
+      <div class="data-card" style="background: rgba(255,255,255,0.08); min-width: 160px;">
+        <div class="data-number" style="font-size: 28px; color: var(--orange);">22K+</div>
+        <div class="data-label" style="color: var(--text-light);">usuarios reales</div>
+      </div>
+      <div class="data-card" style="background: rgba(255,255,255,0.08); min-width: 160px;">
+        <div class="data-number" style="font-size: 28px; color: var(--orange);">90K+</div>
+        <div class="data-label" style="color: var(--text-light);">conversaciones</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<div class="nav">
+  <button onclick="go(-1)">←</button>
+  <button onclick="go(1)">→</button>
+</div>
+<div class="slide-counter" id="counter"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    slides.forEach(s => s.classList.remove('active'));
+    slides[i].classList.add('active');
+    document.getElementById('counter').textContent = `${i + 1} / ${total}`;
+    document.getElementById('progress').style.width = `${((i + 1) / total) * 100}%`;
+  }
+
+  function go(d) {
+    cur = Math.max(0, Math.min(total - 1, cur + d));
+    show(cur);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    if (e.key === 'Home') { e.preventDefault(); cur = 0; show(cur); }
+    if (e.key === 'End') { e.preventDefault(); cur = total - 1; show(cur); }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) go(diff < 0 ? 1 : -1);
+  });
+
+  show(0);
+</script>
+</body>
+</html>
